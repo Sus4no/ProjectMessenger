@@ -1,0 +1,48 @@
+.hello {
+    font-size: 50px;
+    font-family: Arial;
+    text-align: center;
+}
+
+
+body {
+    background-color: #222;
+}
+
+
+.wrapper{
+    min-height: 100%;
+    color: #ddd;
+}
+
+
+.navbar-my{
+    border-bottom: 1px solid #aaa;
+}
+
+
+.contacts__item {
+    border: #333 solid 1px;
+    background-color: #252525;
+}
+
+
+.contacts__list {
+    margin: 3% 25% 0 25%;
+    border: #444 solid 1px;
+}
+
+
+.contacts__img {
+    background-color: white;
+    border: 1px solid black;
+    width: 60px;
+    height: 60px;
+    border-radius: 10%;
+}
+
+
+.contacts__name {
+    margin-left: 15px;
+    color: #ddd;
+}
