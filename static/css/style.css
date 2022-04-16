@@ -18,6 +18,12 @@ body {
 
 .navbar-my{
     border-bottom: 1px solid #aaa;
+    background-color: #222
+}
+
+
+.content {
+    margin-top: 7%;
 }
 
 
