@@ -23,7 +23,7 @@ body {
 
 
 .content {
-    margin-top: 7%;
+    margin: 7% 25% 0 25%;
 }
 
 
@@ -34,7 +34,6 @@ body {
 
 
 .contacts__list {
-    margin: 3% 25% 0 25%;
     border: #444 solid 1px;
 }
 
