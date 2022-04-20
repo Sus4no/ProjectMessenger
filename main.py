@@ -33,35 +33,39 @@ class LoginForm(FlaskForm):
 
 @app.route('/registration', methods=['POST', 'GET'])
 def registration():
-    form = LoginForm()
-    if form.validate_on_submit():
-        user = User()
-        user.username = form.username.data
-        user.password = hashpw(form.password.data.encode(), SALT)
-        db_sess = db_session.create_session()
-        db_sess.add(user)
-        db_sess.commit()
+    if not current_user.is_authenticated:
+        form = LoginForm()
+        if form.validate_on_submit():
+            user = User()
+            user.username = form.username.data
+            user.password = hashpw(form.password.data.encode(), SALT)
+            db_sess = db_session.create_session()
+            db_sess.add(user)
+            db_sess.commit()
 
-        user1 = db_sess.query(User).all()
-        for i in user1:
-            print(i.username, i.password)
-        
-        return redirect('/login')
-    return render_template('registration.html', title='Регистрация', form=form)
+            user1 = db_sess.query(User).all()
+            for i in user1:
+                print(i.username, i.password)
+            
+            return redirect('/login')
+        return render_template('registration.html', title='Регистрация', form=form)
+    return redirect("/contacts")
 
 
 @app.route('/login', methods=['POST', 'GET'])
 def login():
-    form = LoginForm()
-    if form.validate_on_submit():
-        password = hashpw(form.password.data.encode(), SALT)
-        db_sess = db_session.create_session()
-        user = db_sess.query(User).filter(User.username == form.username.data).first()
-        if user and user.password == password:
-            login_user(user, remember=form.remember_me.data)
-            return redirect('/contacts')
-        return render_template('login.html', message="Неправильный логин или пароль", form=form)
-    return render_template('login.html', title='Авторизация', form=form)
+    if not current_user.is_authenticated:
+        form = LoginForm()
+        if form.validate_on_submit():
+            password = hashpw(form.password.data.encode(), SALT)
+            db_sess = db_session.create_session()
+            user = db_sess.query(User).filter(User.username == form.username.data).first()
+            if user and user.password == password:
+                login_user(user, remember=form.remember_me.data)
+                return redirect('/contacts')
+            return render_template('login.html', message="Неправильный логин или пароль", form=form)
+        return render_template('login.html', title='Авторизация', form=form)
+    return redirect("/contacts")
 
 
 @app.route('/logout')
