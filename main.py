@@ -4,19 +4,30 @@ from wtforms import StringField, PasswordField, BooleanField, SubmitField
 from wtforms.validators import DataRequired
 from data import db_session
 from data.users import User
-import bcrypt
+from flask_login import LoginManager, login_user, current_user, login_required, logout_user
+from bcrypt import hashpw
 
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'duAMjLz8HhvBLjllrCTy'
+SALT = b'$2b$12$rQ4fJyk5g7baIrXABXO3nu'
+login_manager = LoginManager()
+login_manager.init_app(app)
+
 users = ['user1', 'user2', 'user3', 'user4', 'user5']
 messages = ['Lorem ipsum dolor', '2', 'Some txt', '4', 'etc']
-SALT = b'$2b$12$rQ4fJyk5g7baIrXABXO3nu'
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    db_sess = db_session.create_session()
+    return db_sess.query(User).get(user_id)
 
 
 class LoginForm(FlaskForm):
     username = StringField('Логин', validators=[DataRequired()])
     password = PasswordField('Пароль', validators=[DataRequired()])
+    remember_me = BooleanField('Запомнить меня')
     submit = SubmitField('Войти')
 
 
@@ -26,7 +37,7 @@ def registration():
     if form.validate_on_submit():
         user = User()
         user.username = form.username.data
-        user.password = bcrypt.hashpw(form.password.data.encode(), SALT)
+        user.password = hashpw(form.password.data.encode(), SALT)
         db_sess = db_session.create_session()
         db_sess.add(user)
         db_sess.commit()
@@ -43,16 +54,21 @@ def registration():
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-        user = User()
-        user.username = form.username.data
-        password = bcrypt.hashpw(form.password.data.encode(), SALT)
-        user.password = password
+        password = hashpw(form.password.data.encode(), SALT)
         db_sess = db_session.create_session()
-
-        for username in db_sess.query(User).filter(User.username == form.username.data):
-            if username.password == password:
-                return redirect('/contacts')
+        user = db_sess.query(User).filter(User.username == form.username.data).first()
+        if user and user.password == password:
+            login_user(user, remember=form.remember_me.data)
+            return redirect('/contacts')
+        return render_template('login.html', message="Неправильный логин или пароль", form=form)
     return render_template('login.html', title='Авторизация', form=form)
+
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect("/login")
 
 
 @app.route('/purge')
@@ -67,12 +83,16 @@ def clear():
 
 @app.route('/contacts')
 def contacts_page():
-    return render_template('contacts.html', users=users)
+    if current_user.is_authenticated:
+        return render_template('contacts.html', users=users, current_user=current_user)
+    return redirect("/login")
 
 
 @app.route('/contacts/<user_id>')
 def dialogue_page(user_id):
-    return render_template('conversation.html', messages=messages)
+    if current_user.is_authenticated:
+        return render_template('conversation.html', messages=messages)
+    return redirect("/login")
 
 
 def main():
