@@ -4,7 +4,7 @@
 <div class="contacts">
     <div>
         {{ current_user.username }}
-        <a href="/logout">выйти</a>
+        <a href="/logout" class="btn btn-primary btn-logout">выйти</a>
     </div>
     <div class="list-group contacts__list">
         {% for item in users %}
