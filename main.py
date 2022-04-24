@@ -88,6 +88,16 @@ def clear():
 @app.route('/contacts')
 def contacts_page():
     if current_user.is_authenticated:
+        users = list()
+        db_sess = db_session.create_session()
+        user = db_sess.query(Messages).filter((Messages.sender == current_user.username) | (Messages.receiver == current_user.username))
+        for item in user:
+            if item.sender == current_user.username:
+                if item.receiver not in users:
+                    users.append(item.receiver)
+            elif item.receiver == current_user.username:
+                if item.receiver not in users:
+                    users.append(item.sender)
         return render_template('contacts.html', users=users, current_user=current_user)
     return redirect("/login")
 
@@ -97,8 +107,7 @@ def dialogue_page(username):
     if current_user.is_authenticated:
         db_sess = db_session.create_session()
         messages = db_sess.query(Messages).filter((Messages.sender == current_user.username) | (Messages.receiver == current_user.username),
-        (Messages.sender == username) | (Messages.receiver == username ))
-
+        (Messages.sender == username) | (Messages.receiver == username))
         if request.method == 'POST':
             cur_mess = request.form.get('cur_mess')
             message = Messages()
