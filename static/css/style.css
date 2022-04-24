@@ -124,3 +124,12 @@ body {
 .string-mess {
     word-wrap: break-word;
 }
+
+.contacts {
+    width: 100%;
+}
+
+.status {
+    display: flex;
+    justify-content: space-between;
+}
