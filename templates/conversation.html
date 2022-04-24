@@ -5,8 +5,8 @@
     <ul class="list-group conversation__list">
         {% for item in messages %}
         <div data-bs-spy="scroll" data-bs-target="#navbar-example2" data-bs-offset="0" class="scrollspy-example" tabindex="0">
-            <h4 id="scrollspyHeading1">First heading</h4>
-            <p>{{ item }}</p>
+            <h4 id="scrollspyHeading1">{{ item.sender }}</h4>
+            <p>{{ item.text }}</p>
         </div>
         {% endfor %}
         <form method="POST">

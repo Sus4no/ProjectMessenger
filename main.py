@@ -4,6 +4,7 @@ from wtforms import StringField, PasswordField, BooleanField, SubmitField
 from wtforms.validators import DataRequired
 from data import db_session
 from data.users import User
+from data.messages import Messages
 from flask_login import LoginManager, login_user, current_user, login_required, logout_user
 from bcrypt import hashpw
 
@@ -15,7 +16,6 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 
 users = ['user1', 'user2', 'user3', 'user4', 'user5']
-messages = ['Lorem ipsum dolor', '2', 'Some txt', '4', 'etc']
 
 
 @login_manager.user_loader
@@ -92,13 +92,23 @@ def contacts_page():
     return redirect("/login")
 
 
-@app.route('/contacts/<user_id>', methods=['GET', 'POST'])
-def dialogue_page(user_id):
-    if request.method == 'POST':
-        cur_mess = request.form.get('cur_mess')
-        messages.append(cur_mess)
-        return render_template('conversation.html', messages=messages)
+@app.route('/contacts/<username>', methods=['GET', 'POST'])
+def dialogue_page(username):
     if current_user.is_authenticated:
+        db_sess = db_session.create_session()
+        messages = db_sess.query(Messages).filter((Messages.sender == current_user.username) | (Messages.receiver == current_user.username),
+        (Messages.sender == username) | (Messages.receiver == username ))
+
+        if request.method == 'POST':
+            cur_mess = request.form.get('cur_mess')
+            message = Messages()
+            message.sender = current_user.username
+            message.receiver = username
+            message.text = cur_mess
+            db_sess.add(message)
+            db_sess.commit()
+            print('done')
+            return render_template('conversation.html', messages=messages)
         return render_template('conversation.html', messages=messages)
     return redirect("/login")
 
