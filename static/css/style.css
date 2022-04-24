@@ -103,3 +103,8 @@ body {
     background: #38b34c;
     margin-top: 5px;
 }
+
+.conversation__list {
+    display: flex;
+    flex-direction: column;
+}

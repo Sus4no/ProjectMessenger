@@ -92,8 +92,12 @@ def contacts_page():
     return redirect("/login")
 
 
-@app.route('/contacts/<user_id>')
+@app.route('/contacts/<user_id>', methods=['GET', 'POST'])
 def dialogue_page(user_id):
+    if request.method == 'POST':
+        cur_mess = request.form.get('cur_mess')
+        messages.append(cur_mess)
+        return render_template('conversation.html', messages=messages)
     if current_user.is_authenticated:
         return render_template('conversation.html', messages=messages)
     return redirect("/login")
