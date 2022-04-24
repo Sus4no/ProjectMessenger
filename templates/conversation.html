@@ -1,17 +1,19 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="conversation">
+<div class="conversation-q">
     <ul class="list-group conversation__list">
-        {% for item in messages %}
-        <div data-bs-spy="scroll" data-bs-target="#navbar-example2" data-bs-offset="0" class="scrollspy-example" tabindex="0">
-            <h4 id="scrollspyHeading1">{{ item.sender }}</h4>
-            <p>{{ item.text }}</p>
+        <div class='conversation'>
+            {% for item in messages %}
+            <div data-bs-spy="scroll" data-bs-target="#navbar-example2" data-bs-offset="0" class="scrollspy-example" tabindex="0">
+                <h4 id="scrollspyHeading1">{{ item.sender }}</h4>
+                <p class='string_mess'>{{ item.text }}</p>
+            </div>
+            {% endfor %}
         </div>
-        {% endfor %}
         <form method="POST">
-            <div id='bottom'>
-                <input type="text" name="cur_mess" class="form-control"></label>
+            <div>
+                <input type="text" name="cur_mess" class="form-control">
             </div>
             <input type="submit" value="Submit" class='btn btn-primary'>
         </form>

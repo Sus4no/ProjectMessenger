@@ -4,11 +4,11 @@
 <div class="contacts">
     <div>
         {{ current_user.username }}
-        <a href="/logout" class="btn btn-primary btn-logout">выйти</a>
+        <a href="/logout" class="btn btn-primary btn-logout">Выйти</a>
     </div>
     <div class="list-group contacts__list">
         {% for item in users %}
-        <a class="list-group-item btn-outline-primary contacts__item" href="contacts/{{ item }}#bottom">
+        <a class="list-group-item btn-outline-primary contacts__item" href="contacts/{{ item }}#scrollspyHeading1">
             <img class="contacts__img" src="../static/img/user.jpg" alt="">
             <span class="contacts__name">{{ item }}</span>
         </a>

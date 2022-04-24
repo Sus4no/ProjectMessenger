@@ -88,13 +88,6 @@ def clear():
 @app.route('/contacts')
 def contacts_page():
     if current_user.is_authenticated:
-        db_sess = db_session.create_session()
-        users = set()
-        messages = db_sess.query(Messages).filter((Messages.sender == current_user.username) | (Messages.receiver == current_user.username))
-        for i in messages:
-            users.add(i.sender)
-            users.add(i.receiver)
-            users.remove(current_user.username)
         return render_template('contacts.html', users=users, current_user=current_user)
     return redirect("/login")
 
@@ -115,8 +108,8 @@ def dialogue_page(username):
             db_sess.add(message)
             db_sess.commit()
             print('done')
-            return render_template('conversation.html', messages=messages)
-        return render_template('conversation.html', messages=messages)
+            return render_template('conversation.html', messages=messages[::-1])
+        return render_template('conversation.html', messages=messages[::-1])
     return redirect("/login")
 
 

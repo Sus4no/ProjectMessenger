@@ -107,4 +107,20 @@ body {
 .conversation__list {
     display: flex;
     flex-direction: column;
+    height: 800px;
+    width: 100%;
+}
+
+.conversation {
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column-reverse;
+}
+
+.scrollspy-example {
+    width: 100%;
+}
+
+.string-mess {
+    word-wrap: break-word;
 }
