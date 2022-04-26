@@ -14,5 +14,19 @@
         </a>
         {% endfor %}
     </div>
+    <a href='#add' class='btn btn-primary btn-add'>Добавить контакт</a>
+    <div  id='add'>
+        <form method='POST'>
+            <div class='add-contact-pad'>
+                <p class='add-cont-tag'>Добавить контакт</p>
+                <p class='add-cont-tag'>Контакт</p>
+                <input type="text" name="add_contact" class="form-control add-string" autocomplete='off'>
+                <p class='add-cont-tag'>Сообщение</p>
+                <input type="text" name="cont_message" class="form-control add-string" autocomplete='off'>
+            </div>
+            <input type="submit" value="Отправить" class='btn btn-primary btn-add'>
+            <a href='' class='btn btn-primary btn-add'>Закрыть</a>
+        </form>
+    </div>
 </div>
 {% endblock %}

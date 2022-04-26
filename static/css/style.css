@@ -133,3 +133,34 @@ body {
     display: flex;
     justify-content: space-between;
 }
+
+#add {
+    display: none;
+    border: #444 solid 1px;
+    border-radius:.25rem;
+    padding: 0rem 1rem 1rem 1rem;
+    background-color: #252525;
+}
+
+.add-contact-pad {
+    display: flex;
+    flex-direction: column;
+}
+
+.add-string {
+    margin-top: 5px;
+    width: 50%;
+}
+
+.btn-add {
+    margin-top: 1rem;
+}
+
+.add-cont-tag {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+#add:target {
+    display: block;
+}
