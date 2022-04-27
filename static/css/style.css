@@ -117,6 +117,10 @@ body {
     flex-direction: column-reverse;
 }
 
+.conversation::-webkit-scrollbar {
+  width: 0;
+}
+
 .scrollspy-example {
     width: 100%;
 }
