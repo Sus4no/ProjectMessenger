@@ -123,10 +123,14 @@ body {
 
 .scrollspy-example {
     width: 100%;
+    border: #444 solid 1px;
+    padding: 0.5rem 0rem 0rem 1rem;
+    border-radius: .25rem;
 }
 
 .string-mess {
     word-wrap: break-word;
+    color: #888;
 }
 
 .contacts {
