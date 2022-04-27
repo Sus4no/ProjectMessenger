@@ -8,6 +8,7 @@ from data.messages import Messages
 from flask_login import LoginManager, login_user, current_user, login_required, logout_user
 from bcrypt import hashpw
 
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'duAMjLz8HhvBLjllrCTy'
 SALT = b'$2b$12$rQ4fJyk5g7baIrXABXO3nu'
@@ -37,7 +38,6 @@ def registration():
         if form.validate_on_submit():
             user = User()
             user.username = form.username.data
-            user = db_sess.query(User).filter(User.username == form.username.data).first()
             user.password = hashpw(form.password.data.encode(), SALT)
             db_sess = db_session.create_session()
             db_sess.add(user)
@@ -88,21 +88,17 @@ def clear():
 @app.route('/contacts', methods=['GET', 'POST'])
 def contacts_page():
     if current_user.is_authenticated:
-        users = list()
         db_sess = db_session.create_session()
-        user = db_sess.query(Messages).filter(
-            (Messages.sender == current_user.username) | (Messages.receiver == current_user.username))
-        usernames = db_sess.query(User)
-        for item in user:
-            if item.sender == current_user.username:
-                if item.receiver not in users:
-                    users.append(item.receiver)
-            elif item.receiver == current_user.username:
-                if item.sender not in users:
-                    users.append(item.sender)
+        users = set()
+        messages = db_sess.query(Messages).filter((Messages.sender == current_user.username) | (Messages.receiver == current_user.username)).all()
+        for i in messages:
+            users.add(i.sender)
+            users.add(i.receiver)
+            users.remove(current_user.username)
         if request.method == 'POST':
             add_contact = request.form.get('add_contact')
             add_message = request.form.get('add_message')
+            usernames = db_sess.query(User).all()
             for item in usernames:
                 if add_contact == item.username:
                     message = Messages()
@@ -120,9 +116,9 @@ def contacts_page():
 def dialogue_page(username):
     if current_user.is_authenticated:
         db_sess = db_session.create_session()
-        messages = db_sess.query(Messages).filter(
-            (Messages.sender == current_user.username) | (Messages.receiver == current_user.username),
-            (Messages.sender == username) | (Messages.receiver == username))
+        messages = db_sess.query(Messages).filter((Messages.sender == current_user.username) | (Messages.receiver == current_user.username),
+        (Messages.sender == username) | (Messages.receiver == username ))
+
         if request.method == 'POST':
             cur_mess = request.form.get('cur_mess')
             message = Messages()
@@ -131,7 +127,6 @@ def dialogue_page(username):
             message.text = cur_mess
             db_sess.add(message)
             db_sess.commit()
-            print('done')
             return render_template('conversation.html', messages=messages[::-1])
         return render_template('conversation.html', messages=messages[::-1])
     return redirect("/login")
