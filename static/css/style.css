@@ -117,7 +117,7 @@ body {
     flex-direction: column-reverse;
 }
 
-.conversation::-webkit-scrollbar {
+::-webkit-scrollbar {
   width: 0;
 }
 
