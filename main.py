@@ -37,6 +37,7 @@ def registration():
         if form.validate_on_submit():
             user = User()
             user.username = form.username.data
+            user = db_sess.query(User).filter(User.username == form.username.data).first()
             user.password = hashpw(form.password.data.encode(), SALT)
             db_sess = db_session.create_session()
             db_sess.add(user)
@@ -84,23 +85,33 @@ def clear():
     return 'Done'
 
 
-@app.route('/contacts')
+@app.route('/contacts', methods=['GET', 'POST'])
 def contacts_page():
     if current_user.is_authenticated:
-        users = set()
+        users = list()
         db_sess = db_session.create_session()
         user = db_sess.query(Messages).filter(
             (Messages.sender == current_user.username) | (Messages.receiver == current_user.username))
+        usernames = db_sess.query(User)
         for item in user:
-            users.add(item.sender)
-            users.add(item.receiver)
-        users.discard(current_user.username)
-        ##    if item.sender == current_user.username:
-        ##        if item.receiver not in users:
-        ##            users.append(item.receiver)
-        ##    elif item.receiver == current_user.username:
-        ##        if item.sender not in users:
-        ##            users.append(item.sender)
+            if item.sender == current_user.username:
+                if item.receiver not in users:
+                    users.append(item.receiver)
+            elif item.receiver == current_user.username:
+                if item.sender not in users:
+                    users.append(item.sender)
+        if request.method == 'POST':
+            add_contact = request.form.get('add_contact')
+            add_message = request.form.get('add_message')
+            for item in usernames:
+                if add_contact == item.username:
+                    message = Messages()
+                    message.sender = current_user.username
+                    message.receiver = add_contact
+                    message.text = add_message
+                    db_sess.add(message)
+                    db_sess.commit()
+                    return render_template('contacts.html', users=users, current_user=current_user)
         return render_template('contacts.html', users=users, current_user=current_user)
     return redirect("/login")
 
