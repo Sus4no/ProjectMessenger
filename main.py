@@ -15,8 +15,6 @@ SALT = b'$2b$12$rQ4fJyk5g7baIrXABXO3nu'
 login_manager = LoginManager()
 login_manager.init_app(app)
 
-users = ['user1', 'user2', 'user3', 'user4', 'user5']
-
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -39,14 +37,10 @@ def registration():
             user = User()
             user.username = form.username.data
             user.password = hashpw(form.password.data.encode(), SALT)
+
             db_sess = db_session.create_session()
             db_sess.add(user)
             db_sess.commit()
-
-            user1 = db_sess.query(User).all()
-            for i in user1:
-                print(i.username, i.password)
-
             return redirect('/login')
         return render_template('registration.html', title='Регистрация', form=form)
     return redirect("/contacts")
@@ -60,9 +54,11 @@ def login():
             password = hashpw(form.password.data.encode(), SALT)
             db_sess = db_session.create_session()
             user = db_sess.query(User).filter(User.username == form.username.data).first()
+
             if user and user.password == password:
                 login_user(user, remember=form.remember_me.data)
                 return redirect('/contacts')
+            
             return render_template('login.html', message="Неправильный логин или пароль", form=form)
         return render_template('login.html', title='Авторизация', form=form)
     return redirect("/contacts")
@@ -73,16 +69,6 @@ def login():
 def logout():
     logout_user()
     return redirect("/login")
-
-
-@app.route('/purge')
-def clear():
-    db_sess = db_session.create_session()
-    db_sess.query(User).delete()
-    for i in db_sess.query(User).all():
-        print(i.username)
-    db_sess.commit()
-    return 'Done'
 
 
 @app.route('/contacts', methods=['GET', 'POST'])
